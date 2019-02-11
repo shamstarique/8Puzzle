@@ -45,15 +45,20 @@ struct Compare_Nodes{
     }
 };
 
-bool compare_puzzles(Node a, Node b){
+bool Compare_Puzzles(Node a, Node b){
 //check if puzzle is same    
-    if(true){
-        return true;
+    bool puzzles_are_the_same = true;
+    for(int i = 0; i < a.puzzle_box.size(); i++){
+        for(int j = 0; j < a.puzzle_box.at(i).size(); j++){
+            if(a.puzzle_box.at(i).at(j) != b.puzzle_box.at(i).at(j)){
+                puzzles_are_the_same = false;
+            }
+        }
     }
-    return false;    
+    return puzzles_are_the_same;    
 };
 
-void Generate_Next_Nodes(){
+void Generate_Next_Nodes(vector< vector<int> > &node_queue){
     
     return;
 };
@@ -75,20 +80,30 @@ int main(){
     vector<vector<int> > input_puzzle (3);//TODO: change hardcoding to softcoding hwere size of array can be anything
     vector< vector< vector<int> > > puzzle_list;
     
-    vector< vector<int> > default_puzzle;
-    priority_queue<Node, vector<Node>, Compare_Nodes> queue;
-    /*
-    queue.push(Node(input_puzzle,1,4));
-    queue.push(Node(input_puzzle,0,0));
-    queue.push(Node(input_puzzle,1,3));
+    vector< vector<int> > default_puzzle (3);
+    default_puzzle.at(0).push_back(1);
+    default_puzzle.at(0).push_back(2);
+    default_puzzle.at(0).push_back(3);
+    default_puzzle.at(1).push_back(4);
+    default_puzzle.at(1).push_back(0);
+    default_puzzle.at(1).push_back(6);
+    default_puzzle.at(2).push_back(7);
+    default_puzzle.at(2).push_back(5);
+    default_puzzle.at(2).push_back(8);
     
-    Node z = queue.top();
+    priority_queue<Node, vector<Node>, Compare_Nodes> node_queue;
+    /*
+    node_queue.push(Node(input_puzzle,1,4));
+    node_queue.push(Node(input_puzzle,0,0));
+    node_queue.push(Node(input_puzzle,1,3));
+    
+    Node z = node_queue.top();
     cout<<"top of queue:"<<z.G_n + z.H_n<<endl;
-    queue.pop();
-    z = queue.top();
+    node_queue.pop();
+    z = node_queue.top();
     cout<<"top of queue after pop:"<<z.G_n + z.H_n<<endl;
-    queue.pop();
-    z = queue.top();
+    node_queue.pop();
+    z = node_queue.top();
     cout<<"top of queue after 2nd pop:"<<z.G_n + z.H_n<<endl;
     */
 
@@ -135,6 +150,14 @@ int main(){
     for(int i = 0; i <input_puzzle.size(); i++){
         for(int j = 0; j < input_puzzle.at(0).size(); j++){
             cout<<input_puzzle.at(i).at(j)<<" ";
+        }
+        cout<<endl;
+    }
+    
+    cout<<"default puzzle"<<endl;
+    for(int i = 0; i <default_puzzle.size(); i++){
+        for(int j = 0; j < default_puzzle.at(0).size(); j++){
+            cout<<default_puzzle.at(i).at(j)<<" ";
         }
         cout<<endl;
     }
