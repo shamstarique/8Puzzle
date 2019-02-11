@@ -2,6 +2,7 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include<sstream>
 
 using namespace std;
 
@@ -28,12 +29,6 @@ int Manhattan_Distance(vector<vector <int> > puzzle_state){
     return H_n;
 };
 
-
-void Generate_Next_Nodes(){
-    
-    return;
-};
-
 //Node struct and node comparison for the Priority Queue
 struct Node{
     vector <vector <int> > puzzle_box;
@@ -50,33 +45,42 @@ struct Compare_Nodes{
     }
 };
 
+bool compare_puzzles(Node a, Node b){
+//check if puzzle is same    
+    if(true){
+        return true;
+    }
+    return false;    
+};
+
+void Generate_Next_Nodes(){
+    
+    return;
+};
+
+
+
 int main(){
     
+    string string_parse;
+    int int_parse;
     int puzzle_form; //should be either 1 or 2 denoting defualt puzzle or their own puzzle
-    
+    int puzzle_heuristic;
     //
     int max_nodes_in_queue = 0;
     int goal_node_depth;
     int num_of_expanded_nodes = 0;
     
     
-    vector<vector<int> > puzzle1;
-    vector<int> a(3);
-    vector<int> b(3);
-    vector<int> c(3);
+    vector<vector<int> > input_puzzle (3);//TODO: change hardcoding to softcoding hwere size of array can be anything
+    vector< vector< vector<int> > > puzzle_list;
     
-    cout<<"a0:"<<a.at(0);
-    puzzle1.push_back(a);
-    puzzle1.push_back(b);
-    puzzle1.push_back(c);
-    
-    
-    
+    vector< vector<int> > default_puzzle;
     priority_queue<Node, vector<Node>, Compare_Nodes> queue;
-    
-    queue.push(Node(puzzle1,1,1));
-    queue.push(Node(puzzle1,0,0));
-    queue.push(Node(puzzle1,1,1));
+    /*
+    queue.push(Node(input_puzzle,1,4));
+    queue.push(Node(input_puzzle,0,0));
+    queue.push(Node(input_puzzle,1,3));
     
     Node z = queue.top();
     cout<<"top of queue:"<<z.G_n + z.H_n<<endl;
@@ -86,23 +90,54 @@ int main(){
     queue.pop();
     z = queue.top();
     cout<<"top of queue after 2nd pop:"<<z.G_n + z.H_n<<endl;
-/*
+    */
+
     //Generating interface and Collecting Input from User
+    //TODO: sanitize and error check input
     cout<<"Welcome to Khuaja Shams's 8-puzzle solver.\n";
-    cout<<"Type "1" to use a default puzzle, or "2" to enter your own puzzle\n.
-    cin>>puzzle_form; //TODO: sanitize and error check input
-    //TODO:grab userinput
-    cout<<"Enter your puzzle, use a zero to represent the blank\n";
-    cout<<"Enter the first row, use space or tabs between numbers";
+    cout<<"Type "<<1<<" to use a default puzzle, or "<<2<<" to enter your own puzzle.\n";
+    getline(cin,string_parse);
+    stringstream(string_parse) >> puzzle_form; 
+   
+    
+    cout<<"\tEnter your puzzle, use a zero to represent the blank\n";
+    cout<<"\tEnter the first row, use space or tabs between numbers\t\t";
+    //TODO: put this iterative sequence in a loop to make it the puzzle is expandable in size
+    getline(cin,string_parse);
+    stringstream ss1(string_parse); //TODO: figure out how to use 1 stringstream instance
+    
+    while(ss1>>int_parse){
+        input_puzzle.at(0).push_back(int_parse);
+    }
+    
     //TODO: grab first row
-    cout<<"\nEnter the second row, use space or tabs between numbers";
-    //TODO: grab 2nd row
-    cout<<"\nEnter the third row, use space or tabs between numbers";
-    cout<<"\n\nEnter your choice of algorithm";
-    cout<<"\n1. Uniform Cost Search.";
-    cout<<"\n2. A* with the Misplaced Tile heurisitic.";
-    cout<<"\n3. A* with the manhattan distance heuristic.";
-*/
+    cout<<"\tEnter the second row, use space or tabs between numbers\t\t";
+    getline(cin,string_parse);
+    stringstream ss(string_parse); 
+    while(ss>>int_parse){
+        input_puzzle.at(1).push_back(int_parse);
+    }
+    cout<<"\tEnter the third row, use space or tabs between numbers\t\t";
+    getline(cin,string_parse);
+   stringstream ss2(string_parse); 
+    while(ss2>>int_parse){
+        input_puzzle.at(2).push_back(int_parse);
+    }
+    
+    cout<<"\n\tEnter your choice of algorithm"; 
+    cout<<"\n\t1. Uniform Cost Search.";
+    cout<<"\n\t2. A* with the Misplaced Tile heurisitic.";
+    cout<<"\n\t3. A* with the manhattan distance heuristic.\n";
+    getline(cin,string_parse);
+    stringstream(string_parse) >> puzzle_heuristic; 
+    
+    cout<<"puzzle input"<<endl;
+    for(int i = 0; i <input_puzzle.size(); i++){
+        for(int j = 0; j < input_puzzle.at(0).size(); j++){
+            cout<<input_puzzle.at(i).at(j)<<" ";
+        }
+        cout<<endl;
+    }
 //TODO: print expanded manhattan 
     return 0;
 }
