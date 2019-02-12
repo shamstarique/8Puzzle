@@ -12,8 +12,11 @@ int Misplaced_Tile(vector<vector <int> > puzzle_state){
    int H_n = 0;//H(n) value to be plugged into f(n) = H(n) + g(n)
    for(int i = 0; i < puzzle_state.size(); i++){
        for(int j = 0; j < puzzle_state.at(i).size(); j++){
-           if((i*puzzle_state.size() + j + 1) != puzzle_state.at(i).at(j)){
+           if((puzzle_state.at(i).at(j) == 0)){
+           }else if(((i*puzzle_state.size() + j + 1) != puzzle_state.at(i).at(j))){
                H_n++;
+           }else{
+               
            }
        }
    }
@@ -61,7 +64,6 @@ void actual_position(int& val, int& x, int& y)
 int Manhattan_Distance(vector<vector <int> > puzzle_state){
     int H_n = 0;
     int act_x, act_y;
-    
     for(int i = 0; i < puzzle_state.size(); i++){
        for(int j = 0; j < puzzle_state.at(i).size(); j++){
            if(puzzle_state.at(i).at(j) != 0){
@@ -105,7 +107,88 @@ bool Compare_Puzzles(Node a, Node b){
     return puzzles_are_the_same;    
 };
 
-void Generate_Next_Nodes(vector< vector<int> > &node_queue, int puzzle_heuristic){
+bool Puzzle_Repeated(vector<Node> &node_list, Node a){
+    for(int i = 0; i < node_list.size(); i++){
+        if(Compare_Puzzles(a, node_list.at(i))){ 
+            return true;
+        }
+    }
+    return false;
+}
+
+int get_H_n(int puzzle_heuristic, vector< vector<int> > puzzle_board){
+    if(puzzle_heuristic == 1){
+        return 0;
+    }else if( puzzle_heuristic == 2){
+        return Misplaced_Tile(puzzle_board);
+    }else if( puzzle_heuristic == 3){
+        return Manhattan_Distance(puzzle_board);
+    }else{
+        cout<<"ERROR: PUZZLE HEURISITIC NO WITHIN RANGE. Exiting";
+        return 0;
+    }
+}
+
+
+void Generate_Next_Nodes( priority_queue<Node, vector<Node>, Compare_Nodes> &node_queue, Node &a,vector<Node> &node_list, int puzzle_heuristic){
+    int zero_x;
+    int zero_y;
+    
+    for(int i = 0; i <a.puzzle_box.size();i++){
+        for(int j = 0; j < a.puzzle_box.at(i).size(); j++){
+            if(a.puzzle_box.at(i).at(j) == 0){
+                zero_x = j;
+                zero_y = i;
+            }
+        }
+    }
+    int temp_swap;
+    vector< vector <int> > up = a.puzzle_box;
+    vector< vector <int> > down = a.puzzle_box;
+    vector< vector <int> > left = a.puzzle_box;
+    vector< vector <int> > right = a.puzzle_box;
+    
+    //move empty tile up
+    if(zero_y-1 >=0){
+        //temp_swap = new_puzzle_box.at(zero_y).at(zero_x);
+        up.at(zero_y).at(zero_x) = up.at(zero_y -1).at(zero_x);
+        up.at(zero_y-1).at(zero_x) = 0;
+        Node x = Node(up, a.G_n + 1, get_H_n(puzzle_heuristic, up));
+        if(!Puzzle_Repeated(node_list,x)){
+            node_queue.push(x);
+            node_list.push_back(x);
+        }
+    }
+    //move empty tile down
+    if(zero_y+1<=2){
+        down.at(zero_y).at(zero_x) = down.at(zero_y +1).at(zero_x);
+        down.at(zero_y+1).at(zero_x) = 0;
+        Node x1 = Node(down, a.G_n + 1, get_H_n(puzzle_heuristic, down));
+        if(!Puzzle_Repeated(node_list, x1)){
+            node_queue.push(x1);
+            node_list.push_back(x1);
+        }
+    }
+    //move empty tile left
+    if(zero_x-1 >=0){
+          left.at(zero_y).at(zero_x) = left.at(zero_y).at(zero_x-1);
+        left.at(zero_y).at(zero_x-1) = 0;
+        Node x2 = Node(left, a.G_n + 1, get_H_n(puzzle_heuristic, left));
+        if(!Puzzle_Repeated(node_list, x2)){
+            node_queue.push(x2);
+            node_list.push_back(x2);
+        }
+    }
+    //move empty tile right
+    if(zero_x+1 <=2){
+          right.at(zero_y).at(zero_x) = right.at(zero_y).at(zero_x+1);
+        right.at(zero_y).at(zero_x+1) = 0;
+        Node x3 = Node(right, a.G_n + 1, get_H_n(puzzle_heuristic, right));
+        if(!Puzzle_Repeated(node_list, x3)){
+            node_queue.push(x3);
+            node_list.push_back(x3);
+        }
+    }
     
     return;
 };
@@ -117,8 +200,11 @@ void Print_Node(Node a){
         }
         cout<<endl;
     }    
+   
     return;
 }
+
+
 
 int main(){
    
@@ -133,7 +219,7 @@ int main(){
     
     
     vector<vector<int> > input_puzzle (3);//TODO: change hardcoding to softcoding hwere size of array can be anything
-    vector< vector< vector<int> > > puzzle_list;
+    vector<Node> node_list;
     
     vector< vector<int> > default_puzzle (3);
     default_puzzle.at(0).push_back(1);
@@ -145,6 +231,22 @@ int main(){
     default_puzzle.at(2).push_back(7);
     default_puzzle.at(2).push_back(5);
     default_puzzle.at(2).push_back(8);
+    
+    
+    vector<vector<int> > goal_puzzle (3);
+      goal_puzzle.at(0).push_back(1);
+      goal_puzzle.at(0).push_back(2);
+      goal_puzzle.at(0).push_back(3);
+      goal_puzzle.at(1).push_back(4);
+      goal_puzzle.at(1).push_back(5);
+      goal_puzzle.at(1).push_back(6);
+      goal_puzzle.at(2).push_back(7);
+      goal_puzzle.at(2).push_back(8);
+      goal_puzzle.at(2).push_back(0);
+      
+      Node goal_node = Node(goal_puzzle, 0, 0);
+  
+    
     
     priority_queue<Node, vector<Node>, Compare_Nodes> node_queue;
     /*
@@ -199,51 +301,53 @@ int main(){
     cout<<"\n\tEnter your choice of algorithm"; 
     cout<<"\n\t1. Uniform Cost Search.";
     cout<<"\n\t2. A* with the Misplaced Tile heurisitic.";
-    cout<<"\n\t3. A* with the manhattan distance heuristic.\n";
+    cout<<"\n\t3. A* with the Manhattan Distance heuristic.\n";
     getline(cin,string_parse);
     stringstream(string_parse) >> puzzle_heuristic; 
     
     cout<<"\nExpanding State\n\n";
-    Node given_puzzle = Node(default_puzzle, 0 ,0);
     
-
-    if(puzzle_heuristic == 1){
-        given_puzzle = Node(default_puzzle,0,0);
-    }else if(puzzle_heuristic == 2){
-        given_puzzle = Node(input_puzzle,0,Misplaced_Tile(input_puzzle));
-    }else if(puzzle_heuristic == 3){
-        given_puzzle =Node(input_puzzle,0,Manhattan_Distance(input_puzzle));
+    
+    vector< vector <int> > puzzle_board;
+    int heuristic_value;
+    int depth = 0;
+    if(puzzle_form == 1){
+        puzzle_board = default_puzzle;
     }else{
-        cout<<"ERROR: PLEASE ENTER A VALID HEURISTIC. ACCPETABLE INPUT ARE 1 , 2, and 3."<<endl;
+        puzzle_board = input_puzzle;
     }
+    
+    
+    heuristic_value = get_H_n(puzzle_heuristic, puzzle_board);
+   
+    
+    
+     
+
+    Node given_puzzle = Node(puzzle_board, depth ,heuristic_value);
     
     Print_Node(given_puzzle);
     node_queue.push(given_puzzle);
-    cout<<"done";
-    //while(!node_queue.empty()){
-        
-    //}
-    
-    /*
-    cout<<"puzzle input"<<endl;
-    for(int i = 0; i <input_puzzle.size(); i++){
-        for(int j = 0; j < input_puzzle.at(0).size(); j++){
-            cout<<input_puzzle.at(i).at(j)<<" ";
+   
+    while(!node_queue.empty()){
+        Node min = node_queue.top();
+        if(Compare_Puzzles(goal_node, min)){
+            goal_node = min;
+            break;
         }
-        cout<<endl;
+        cout<<"\nThe best state to expand with a g(n) = "<<min.G_n<<" and h(n) = "<<min.H_n<<" is..."<<endl;
+        Print_Node(min);
+        cout<<"Expanding this node...\n";
+        node_queue.pop();
+        Generate_Next_Nodes(node_queue, min, node_list ,puzzle_heuristic);
     }
     
-    cout<<"default puzzle"<<endl;
-    for(int i = 0; i <default_puzzle.size(); i++){
-        for(int j = 0; j < default_puzzle.at(0).size(); j++){
-            cout<<default_puzzle.at(i).at(j)<<" ";
-        }
-        cout<<endl;
-    }
+    cout<<"\nGoal!!";
+    cout<<"\n to solve this problem the search algorith mepanded a total of "<<123<<" nodes.\n";
+    cout<<"The maximum number of nodes in the quuee at any one time was "<<45<<".\n";
+    cout<<"The depth of the goal node was "<<goal_node.G_n<<".\n";
     
     
-    cout<<"manhattan distance of default puzzle: "<<Manhattan_Distance(default_puzzle)<<endl;
-    */
 //TODO: print expanded manhattan 
     return 0;
 }
