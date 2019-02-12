@@ -335,16 +335,15 @@ int main(){
         if(node_queue.size()>max_nodes_in_queue){
             max_nodes_in_queue = node_queue.size();
         }
-        cout<<"num of expanded nodes: "<<num_of_expanded_nodes<<endl;
-        cout<<"Max nodes in queue: "<<max_nodes_in_queue<<endl;
+        
     }
     
     cout<<"\nGoal!!\n";
-    cout<<"\nTo solve this problem the search algorith expanded a total of "<<num_of_expanded_nodes<<" nodes.\n";
+    cout<<"\nTo solve this problem the search algorithm expanded a total of "<<num_of_expanded_nodes<<" nodes.\n";
     cout<<"The maximum number of nodes in the queue at any one time was "<<max_nodes_in_queue<<".\n";
     cout<<"The depth of the goal node was "<<goal_node.G_n<<".\n";
     
     
-//TODO: print expanded manhattan 
+
     return 0;
 }
