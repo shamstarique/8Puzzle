@@ -249,22 +249,7 @@ int main(){
     
     
     priority_queue<Node, vector<Node>, Compare_Nodes> node_queue;
-    /*
-    node_queue.push(Node(input_puzzle,1,4));
-    node_queue.push(Node(input_puzzle,0,0));
-    node_queue.push(Node(input_puzzle,1,3));
-    
-    Node z = node_queue.top();
-    cout<<"top of queue:"<<z.G_n + z.H_n<<endl;
-    node_queue.pop();
-    z = node_queue.top();
-    cout<<"top of queue after pop:"<<z.G_n + z.H_n<<endl;
-    node_queue.pop();
-    z = node_queue.top();
-    cout<<"top of queue after 2nd pop:"<<z.G_n + z.H_n<<endl;
-    */
-
-    //Generating interface and Collecting Input from User
+   
     //TODO: sanitize and error check input
     cout<<"Welcome to Khuaja Shams's 8-puzzle solver.\n";
     cout<<"Type "<<1<<" to use a default puzzle, or "<<2<<" to enter your own puzzle.\n";
@@ -323,7 +308,7 @@ int main(){
     
     
      
-
+    
     Node given_puzzle = Node(puzzle_board, depth ,heuristic_value);
     
     Print_Node(given_puzzle);
@@ -335,16 +320,28 @@ int main(){
             goal_node = min;
             break;
         }
-        cout<<"\nThe best state to expand with a g(n) = "<<min.G_n<<" and h(n) = "<<min.H_n<<" is..."<<endl;
+        if(num_of_expanded_nodes == 0){
+            //i don't want to print out the first node since i already printed it out
+        }else{
+            cout<<"\nThe best state to expand with a g(n) = "<<min.G_n<<" and h(n) = "<<min.H_n<<" is..."<<endl;
         Print_Node(min);
         cout<<"Expanding this node...\n";
+        }
+        num_of_expanded_nodes++;
+        
         node_queue.pop();
         Generate_Next_Nodes(node_queue, min, node_list ,puzzle_heuristic);
+        
+        if(node_queue.size()>max_nodes_in_queue){
+            max_nodes_in_queue = node_queue.size();
+        }
+        cout<<"num of expanded nodes: "<<num_of_expanded_nodes<<endl;
+        cout<<"Max nodes in queue: "<<max_nodes_in_queue<<endl;
     }
     
-    cout<<"\nGoal!!";
-    cout<<"\n to solve this problem the search algorith mepanded a total of "<<123<<" nodes.\n";
-    cout<<"The maximum number of nodes in the quuee at any one time was "<<45<<".\n";
+    cout<<"\nGoal!!\n";
+    cout<<"\nTo solve this problem the search algorith expanded a total of "<<num_of_expanded_nodes<<" nodes.\n";
+    cout<<"The maximum number of nodes in the queue at any one time was "<<max_nodes_in_queue<<".\n";
     cout<<"The depth of the goal node was "<<goal_node.G_n<<".\n";
     
     
